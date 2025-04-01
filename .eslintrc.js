@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
     'jest/globals': true,
-    node: true, // Add this line
+    node: true,
   },
   extends: ['eslint:recommended', 'plugin:react/recommended'],
   parserOptions: {
