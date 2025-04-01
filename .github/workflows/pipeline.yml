@@ -5,21 +5,23 @@ on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
-        node-version: '14'
+        node-version: '18'
+        cache: 'npm' 
     
     - name: Install dependencies
-      run: npm install
+      run: npm ci 
     
     - name: Run linter
       run: npm run lint
-
+    
     - name: Run build
       run: npm run build
       
