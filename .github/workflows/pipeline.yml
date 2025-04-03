@@ -22,15 +22,33 @@ jobs:
       - name: Run linter
         run: npm run lint
 
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs: lint  # Solo ejecuta si lint pasa correctamente
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
       - name: Run build
         run: npm run build
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm test
 
   e2e:
     name: End-to-End Tests
     runs-on: ubuntu-latest
+    needs: build-and-test  # Solo ejecuta si los tests unitarios pasan
 
     steps:
       - name: Checkout repository
@@ -40,25 +58,29 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
+      - name: Install Playwright dependencies
+        run: npx playwright install --with-deps
 
       - name: Ensure port 8080 is free
         run: |
           if lsof -i :8080; then
             echo "Port 8080 is in use, stopping process..."
-            fuser -k 8080/tcp
+            fuser -k 8080/tcp || true
           fi
 
       - name: Start server
-        run: npm run start &
+        run: npm run start & echo $! > server.pid
 
       - name: Wait for server to be ready
-        run: sleep 10
+        run: npx wait-on http://localhost:8080
 
       - name: Run Playwright tests
         run: npm run test:e2e
 
       - name: Stop server
-        run: fuser -k 8080/tcp
+        run: kill $(cat server.pid) || true
