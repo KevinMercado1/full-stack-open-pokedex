@@ -44,11 +44,21 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Ensure port 8080 is free
+        run: |
+          if lsof -i :8080; then
+            echo "Port 8080 is in use, stopping process..."
+            fuser -k 8080/tcp
+          fi
+
       - name: Start server
         run: npm run start &
-      
+
       - name: Wait for server to be ready
         run: sleep 10
 
       - name: Run Playwright tests
         run: npm run test:e2e
+
+      - name: Stop server
+        run: fuser -k 8080/tcp
