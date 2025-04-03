@@ -46,6 +46,9 @@ jobs:
 
       - name: Start server
         run: npm run start &
+      
+      - name: Wait for server to be ready
+        run: sleep 10
 
       - name: Run Playwright tests
         run: npm run test:e2e
