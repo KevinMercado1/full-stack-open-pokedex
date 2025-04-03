@@ -5,7 +5,7 @@ import App from './App';
 import './styles.css';
 
 ReactDOM.createRoot(document.getElementById('app')).render(
-  <Router>
+  <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
     <App />
   </Router>
 );

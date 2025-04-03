@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import LoadingSpinner from './LoadingSpinner';
 import { useApi } from './useApi';
 import PokemonAbility from './PokemonAbility';
 import ErrorMessage from './ErrorMessage';
-
 const formatName = (nameWithDash) => nameWithDash.replace('-', ' ');
 
 const PokemonPage = ({ previous, next }) => {
@@ -34,13 +34,12 @@ const PokemonPage = ({ previous, next }) => {
     (ability) => ability.is_hidden === true
   );
 
-  console.log('hiddenAbility=', hiddenAbility);
   return (
     <>
       <div className="links">
-        {previous && <Link to={`/pokemon/${previous.name}`}>Previous</Link>}
-        <Link to="/">Home</Link>
-        {next && <Link to={`/pokemon/${next.name}`}>Next</Link>}
+        {previous && <Link to={`/pokemon/${previous.name}`} aria-label="Previous">Previous</Link>}
+        <Link to="/" aria-label="Home">Home</Link>
+        {next && <Link to={`/pokemon/${next.name}`} aria-label="Next">Next</Link>}
       </div>
       <div className={`pokemon-page pokemon-type-${type.name}`}>
         <div
@@ -77,6 +76,15 @@ const PokemonPage = ({ previous, next }) => {
       </div>
     </>
   );
+};
+
+PokemonPage.propTypes = {
+  previous: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }),
+  next: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  })
 };
 
 export default PokemonPage;
